@@ -19,16 +19,6 @@ export default function TeamSection() {
       image: "/img/faces/ayush.png",
     },
     {
-      name: "Yusuf Kondkari",
-      role: "Chief Technical Officer",
-      image: "/img/faces/yusuf.png",
-    },
-    {
-      name: "Aditya Choudhary",
-      role: "Co-Founder",
-      image: "/img/faces/aditya.png",
-    },
-    {
       name: "Arpit Padhy",
       role: "Chief Operational Officer",
       image: "/img/faces/arpit.png",
@@ -36,7 +26,7 @@ export default function TeamSection() {
   ];
 
   return (
-    <section id="team" className="relative w-full py-24 md:py-32 bg-maroon-black/30 border-t border-warm-beige/5 overflow-hidden">
+    <section id="team" className="relative w-full py-24 md:py-32 bg-maroon-black border-t border-warm-beige/10 overflow-hidden">
       {/* Background glow highlights */}
       <div className="absolute top-[20%] right-[10%] w-[450px] h-[450px] rounded-full bg-maroon/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[20%] left-[10%] w-[450px] h-[450px] rounded-full bg-luxury-gold/5 blur-[120px] pointer-events-none" />
@@ -59,9 +49,9 @@ export default function TeamSection() {
               </span>
             </div>
             
-            <h2 className="text-3xl md:text-5xl font-display font-bold text-gradient-beige mb-8 leading-tight">
-              Meet The <br />
-              <span className="font-light italic text-warm-beige/70">Leaders</span>
+            <h2 className="text-3xl md:text-5xl font-display font-bold text-warm-beige mb-8 leading-tight">
+              Our <br />
+              <span className="font-light italic text-warm-beige/70">Vision</span>
             </h2>
             
             <p className="text-sm font-sans text-warm-beige/60 mb-6 leading-relaxed">
@@ -103,10 +93,13 @@ export default function TeamSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.8, delay: idx * 0.15 }}
-                  className="group relative rounded-2xl overflow-hidden glass-card aspect-[4/5] flex flex-col justify-end interactive-hover shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
+                  className="theme-brown group relative rounded-2xl overflow-hidden glass-card aspect-[4/5] flex flex-col justify-end interactive-hover shadow-lg"
                 >
+                  {member.name === "Ayush Choudhary" && (
+                    <Link href="/team/ayush" className="absolute inset-0 w-full h-full z-20" />
+                  )}
                   {/* Photo container */}
-                  <div className="absolute inset-0 w-full h-full">
+                  <div className="absolute inset-0 w-full h-full pointer-events-none">
                     <img
                       src={member.image}
                       alt={member.name}

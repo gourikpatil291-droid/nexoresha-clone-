@@ -73,7 +73,12 @@ export default function CustomCursor() {
     camera.position.set(2.8, 2.4, 3.6);
     camera.lookAt(0, 0.35, 0);
 
-    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    try {
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    } catch (e) {
+      console.warn("WebGL not supported or context blocked:", e);
+      return;
+    }
     renderer.setSize(80, 80);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     canvasContainer.appendChild(renderer.domElement);
@@ -307,6 +312,7 @@ export default function CustomCursor() {
       }
       if (renderer) {
         renderer.dispose();
+        renderer.forceContextLoss();
       }
       if (canvasContainer && canvasContainer.parentNode) {
         canvasContainer.parentNode.removeChild(canvasContainer);

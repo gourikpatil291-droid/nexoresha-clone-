@@ -33,7 +33,7 @@ export default function TestimonialsPage() {
       <Navbar />
       
       {/* Decorative Spacer / Top banner for stand-alone page */}
-      <div className="pt-32 pb-8 text-center bg-gradient-to-b from-[#140708] to-maroon-black">
+      <div className="pt-32 pb-8 text-center">
         <div className="max-w-4xl mx-auto px-6">
           <span className="text-xs font-display font-bold uppercase tracking-widest text-luxury-gold mb-3 block">
             Client Success Stories

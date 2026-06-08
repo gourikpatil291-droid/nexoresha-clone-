@@ -33,7 +33,7 @@ export default function PortfolioPage() {
       <Navbar />
       
       {/* Decorative Spacer / Top banner for stand-alone page */}
-      <div className="pt-32 pb-8 text-center bg-gradient-to-b from-[#140708] to-maroon-black relative overflow-hidden">
+      <div className="pt-32 pb-8 text-center relative overflow-hidden">
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           {/* Breadcrumbs */}
           <nav className="flex justify-center items-center space-x-2 text-[10px] md:text-xs font-display uppercase tracking-widest text-warm-beige/40 mb-4 select-none">

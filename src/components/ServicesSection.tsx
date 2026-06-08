@@ -14,7 +14,9 @@ interface ServiceItem {
   route: string;
 }
 
-import HolographicGlobe from "./HolographicGlobe";
+
+
+import RobotVideo from "./RobotVideo";
 
 export default function ServicesSection() {
   const services: ServiceItem[] = [
@@ -98,13 +100,17 @@ export default function ServicesSection() {
   };
 
   return (
-    <section id="services" className="relative w-full py-24 md:py-32 bg-maroon-black overflow-hidden">
+    <section id="services" className="theme-brown relative w-full py-24 md:py-32 bg-maroon-black overflow-hidden">
       {/* Decorative soft glowing backdrop sphere */}
       <div className="absolute top-[30%] left-[50%] -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-maroon/5 blur-[120px] pointer-events-none" />
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-16 md:mb-24">
+        <div className="flex flex-col items-start text-left mb-16 md:mb-24 relative w-full">
+          {/* Robot Video positioned to the right of the section header */}
+          <div className="absolute right-[-50px] md:right-0 top-[20%] md:top-1/2 -translate-y-1/2 w-[300px] md:w-[450px] lg:w-[550px] pointer-events-none z-0 opacity-90">
+            <RobotVideo />
+          </div>
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full glass-panel border-warm-beige/10 mb-6">
             <Sparkles className="w-3.5 h-3.5 text-luxury-gold" />
             <span className="text-[10px] font-display font-bold uppercase tracking-widest text-warm-beige/85">
@@ -112,23 +118,20 @@ export default function ServicesSection() {
             </span>
           </div>
           
-          <div className="flex flex-col items-center justify-center max-w-4xl mb-4 relative w-full">
-            {/* Holographic Globe positioned to the right of the text */}
-            <div className="absolute -right-32 md:-right-48 lg:-right-64 top-1/2 -translate-y-1/2 opacity-75 pointer-events-none z-0 scale-50 md:scale-75">
-              <HolographicGlobe />
-            </div>
+          <div className="flex flex-col items-start justify-start max-w-4xl mb-4 relative w-full">
 
-            <div className="flex items-center justify-center gap-3 mb-2 flex-wrap relative z-10">
+
+            <div className="flex items-center justify-start gap-3 mb-2 flex-wrap relative z-10">
               <div className="w-12 h-6 md:w-16 md:h-8 rounded-full overflow-hidden border border-warm-beige/25 relative flex-shrink-0 shadow-[0_0_15px_rgba(230,213,195,0.15)]">
                 <img src="/img/photo/2.png" alt="Team" className="w-full h-full object-cover" />
               </div>
-              <h2 className="text-3xl md:text-5xl font-display font-bold text-gradient-beige tracking-tight leading-tight drop-shadow-lg">
-                Technology <span className="font-light italic text-warm-beige/70">powering</span>
+              <h2 className="text-3xl md:text-5xl font-display font-bold text-luxury-gold tracking-tight leading-tight drop-shadow-lg">
+                Technology <span className="font-light italic text-white/90">powering</span>
               </h2>
             </div>
-            <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight leading-tight relative z-10 drop-shadow-lg">
-              <span className="font-light italic text-warm-beige/70">your </span>
-              <span className="text-gradient-beige">Business Success</span>
+            <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight leading-tight relative z-10 drop-shadow-lg text-luxury-gold">
+              <span className="font-light italic text-white/90">your </span>
+              Business Success
             </h2>
           </div>
         </div>
@@ -139,7 +142,7 @@ export default function ServicesSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 theme-light"
         >
           {services.map((service, index) => {
             const Icon = service.icon;

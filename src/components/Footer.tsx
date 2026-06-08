@@ -40,7 +40,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="w-full bg-maroon-black pt-16 pb-12 overflow-hidden border-t border-warm-beige/5">
+    <footer className="theme-brown w-full bg-maroon-black pt-16 pb-12 overflow-hidden border-t border-warm-beige/5 rounded-t-[3rem]">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Animated Line Separator with Shifting Gold Highlight */}
@@ -53,12 +53,10 @@ export default function Footer() {
           {/* Column 1: Branding */}
           <div className="flex flex-col md:col-span-2">
             <a href="/" className="flex items-center space-x-3 mb-6 group interactive-hover">
-              <img 
-                src="/logo.png" 
-                alt="NEXORESHA Logo" 
-                className="w-16 h-16 object-contain transition-all duration-500 group-hover:scale-115 group-hover:rotate-12 group-hover:drop-shadow-[0_0_12px_rgba(168,85,247,0.85)]"
-              />
-              <span className="text-xl md:text-2xl font-display font-bold tracking-widest text-gradient-beige transition-all duration-300 group-hover:text-luxury-gold group-hover:translate-x-1">
+              <div className="w-16 h-16 transition-all duration-500 group-hover:scale-115 group-hover:rotate-12 group-hover:drop-shadow-[0_0_12px_rgba(168,85,247,0.85)]">
+                <div className="dynamic-logo" />
+              </div>
+              <span className="text-xl md:text-2xl font-display font-bold tracking-widest text-dynamic transition-all duration-300 group-hover:text-luxury-gold group-hover:translate-x-1">
                 NEXORESHA
               </span>
             </a>
@@ -113,7 +111,7 @@ export default function Footer() {
           </div>
 
           {/* Scroll to Top Arrow Button */}
-          <button
+          <button suppressHydrationWarning
             onClick={scrollToTop}
             className="flex items-center space-x-2 text-[10px] font-display font-bold uppercase tracking-widest text-warm-beige/40 hover:text-warm-beige transition-colors duration-300 group interactive-hover"
             aria-label="Scroll to top"

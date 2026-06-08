@@ -26,12 +26,18 @@ export default function ThreeCanvas() {
     camera.position.z = 25;
 
     // Setup Renderer
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance",
-    });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance",
+      });
+    } catch (e) {
+      console.warn("WebGL not supported or context blocked:", e);
+      return;
+    }
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
@@ -308,6 +314,7 @@ export default function ThreeCanvas() {
       cancelAnimationFrame(animationFrameId);
       resizeObserver.disconnect();
       renderer.dispose();
+      renderer.forceContextLoss();
       bodyGeometry.dispose();
       collarGeometry.dispose();
       abGeometry.dispose();

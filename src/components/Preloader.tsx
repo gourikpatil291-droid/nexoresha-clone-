@@ -23,8 +23,14 @@ export default function Preloader() {
       return;
     }
 
-    // By not using sessionStorage, the preloader will naturally play on 
-    // full page refresh or initial load, but won't replay on client-side routing.
+    // Check if the preloader has already been played in this session
+    if (typeof window !== "undefined" && sessionStorage.getItem("preloader_played")) {
+      setVisible(false);
+      (window as any).preloaderFinished = true;
+      window.dispatchEvent(new Event("preloader-done"));
+      return;
+    }
+
     setVisible(true);
     
     // Disable scroll while loading
@@ -57,6 +63,7 @@ export default function Preloader() {
     document.body.style.overflow = "unset";
     
     if (typeof window !== "undefined") {
+      sessionStorage.setItem("preloader_played", "true");
       (window as any).preloaderFinished = true;
       window.dispatchEvent(new Event("preloader-done"));
     }

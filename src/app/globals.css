@@ -3,6 +3,49 @@
 :root {
   --background: #F4EFE6;
   --foreground: #5A121A;
+
+  /* Base Light Theme Glass Variables */
+  --glass-panel-bg: rgba(244, 239, 230, 0.85);
+  --glass-border: rgba(90, 18, 26, 0.12);
+  
+  --glass-card-bg: rgba(255, 253, 249, 0.7);
+  --glass-card-border: rgba(90, 18, 26, 0.1);
+  --glass-card-shadow: rgba(90, 18, 26, 0.05);
+  
+  --glass-card-hover-border: rgba(90, 18, 26, 0.35);
+  --glass-card-hover-bg: rgba(244, 239, 230, 0.55);
+  --glass-card-hover-shadow1: rgba(90, 18, 26, 0.12);
+  --glass-card-hover-shadow2: rgba(197, 168, 128, 0.08);
+}
+
+.theme-light {
+  /* Retains root styling implicitly */
+}
+
+.theme-brown {
+  --background: #2E1A17;
+  --foreground: #F4EFE6;
+  
+  /* Overwrite the Tailwind variables */
+  --color-warm-beige: #F4EFE6;       /* Make text light beige */
+  --color-maroon: #3D2622;           /* Accent color brown */
+  --color-dark-maroon: #211210;      /* Secondary dark */
+  --color-maroon-black: #2E1A17;     /* Main background color brown */
+  --color-deep-gray: #3A231F;        /* Card background dark brown */
+  --color-soft-ivory: #FDFBF7;       /* Link hovers */
+  
+  /* Overwrite Glass Variables for Brown Theme */
+  --glass-panel-bg: rgba(46, 26, 23, 0.85);
+  --glass-border: rgba(244, 239, 230, 0.12);
+  
+  --glass-card-bg: rgba(58, 35, 31, 0.7);
+  --glass-card-border: rgba(244, 239, 230, 0.1);
+  --glass-card-shadow: rgba(0, 0, 0, 0.3);
+  
+  --glass-card-hover-border: rgba(244, 239, 230, 0.35);
+  --glass-card-hover-bg: rgba(46, 26, 23, 0.55);
+  --glass-card-hover-shadow1: rgba(0, 0, 0, 0.5);
+  --glass-card-hover-shadow2: rgba(197, 168, 128, 0.15);
 }
 
 @theme {
@@ -68,7 +111,7 @@ a, button, input, textarea, [role="button"] {
 }
 
 /* Custom light scrollbars */
-::gradient-vignette {
+.gradient-vignette {
   background: radial-gradient(circle, transparent 60%, rgba(90, 18, 26, 0.05) 100%);
 }
 
@@ -83,27 +126,27 @@ html, body {
 
 /* Glassmorphism utility classes for reversed theme */
 .glass-panel {
-  background: rgba(244, 239, 230, 0.85);
+  background: var(--glass-panel-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(90, 18, 26, 0.12); /* Maroon border */
+  border: 1px solid var(--glass-border);
 }
 
 .glass-card {
-  background: rgba(255, 253, 249, 0.7);
+  background: var(--glass-card-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(90, 18, 26, 0.1); /* Maroon border */
-  box-shadow: 0 8px 32px 0 rgba(90, 18, 26, 0.05);
+  border: 1px solid var(--glass-card-border);
+  box-shadow: 0 8px 32px 0 var(--glass-card-shadow);
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   transform-style: preserve-3d;
   perspective: 1000px;
 }
 
 .glass-card:hover {
-  border-color: rgba(90, 18, 26, 0.35); /* Maroon border on hover */
-  background: rgba(244, 239, 230, 0.55);
-  box-shadow: 0 20px 50px -10px rgba(90, 18, 26, 0.12), 0 0 30px 2px rgba(197, 168, 128, 0.08);
+  border-color: var(--glass-card-hover-border);
+  background: var(--glass-card-hover-bg);
+  box-shadow: 0 20px 50px -10px var(--glass-card-hover-shadow1), 0 0 30px 2px var(--glass-card-hover-shadow2);
   transform: translateY(-8px) scale(1.025) rotateX(2deg) rotateY(1deg); /* 3D Perspective shift */
 }
 
@@ -213,4 +256,27 @@ body {
 .goog-text-highlight {
   background: none !important;
   box-shadow: none !important;
+}
+
+/* Dynamic theme logo */
+.dynamic-logo {
+  background-color: var(--color-warm-beige); /* Maps to brown in light theme, beige in dark theme */
+  -webkit-mask-image: url('/nexoresha_logo.png');
+  mask-image: url('/nexoresha_logo.png');
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  transition: background-color 0.4s ease-in-out;
+}
+
+/* Dynamic Text Color */
+.text-dynamic {
+  color: var(--color-warm-beige);
+  transition: color 0.4s ease-in-out;
 }

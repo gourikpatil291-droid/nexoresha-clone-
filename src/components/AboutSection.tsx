@@ -42,6 +42,7 @@ function Counter({ value, duration = 2.5 }: { value: number; duration?: number }
 export default function AboutSection() {
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
     if (!canvasRef.current || !canvasContainerRef.current) return;
@@ -57,94 +58,208 @@ export default function AboutSection() {
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.z = 10;
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      alpha: true,
-    });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+      });
+    } catch (e) {
+      console.warn("WebGL not supported or context blocked:", e);
+      return;
+    }
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Metallic Box Geometry
-    const innerGeom = new THREE.BoxGeometry(2.0, 2.0, 2.0);
+    // ----- WHACK-A-RABBIT GAME SETUP -----
     
-    // High-end reflective physical material
-    const innerMat = new THREE.MeshPhysicalMaterial({
-      color: 0x7B1822, // Rich Maroon
-      metalness: 0.9,
-      roughness: 0.2,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.1,
-      flatShading: true, // Faceted look to capture light beautifully
-    });
+    // Adjust camera for a top-down angled view of the game board
+    camera.position.set(0, 6, 9);
+    camera.lookAt(0, 0, 0);
 
-    const innerMesh = new THREE.Mesh(innerGeom, innerMat);
+    const gameGroup = new THREE.Group();
+    scene.add(gameGroup);
 
-    // Gold wireframe outer cube
-    const wireGeom = new THREE.BoxGeometry(2.3, 2.3, 2.3);
-    const wireMat = new THREE.MeshBasicMaterial({
-      color: 0xC5A880, // Gold
-      wireframe: true,
-      transparent: true,
-      opacity: 0.4,
-    });
+    // 1. Game Board (Grass)
+    const boardGeom = new THREE.BoxGeometry(8, 0.5, 8);
+    const boardMat = new THREE.MeshStandardMaterial({ color: 0x4ade80, roughness: 0.8 }); // vibrant green grass
+    const board = new THREE.Mesh(boardGeom, boardMat);
+    board.position.y = -0.25;
+    gameGroup.add(board);
+
+    // 2. Holes (3x3 Grid)
+    const holePositions: THREE.Vector3[] = [];
+    const holeRadius = 0.8;
+    for (let x = -2.2; x <= 2.2; x += 2.2) {
+      for (let z = -2.2; z <= 2.2; z += 2.2) {
+        holePositions.push(new THREE.Vector3(x, 0, z));
+        
+        // Visual hole (dark circle on the grass)
+        const holeGeom = new THREE.CylinderGeometry(holeRadius, holeRadius, 0.52, 32);
+        const holeMat = new THREE.MeshBasicMaterial({ color: 0x111111 }); // pitch black
+        const holeMesh = new THREE.Mesh(holeGeom, holeMat);
+        holeMesh.position.set(x, -0.25, z);
+        gameGroup.add(holeMesh);
+      }
+    }
+
+    // 3. Build Low-Poly Rabbit Model
+    const rabbitGroup = new THREE.Group();
     
-    const wireMesh = new THREE.Mesh(wireGeom, wireMat);
+    const rabbitMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
+    const pinkMat = new THREE.MeshStandardMaterial({ color: 0xff99aa, roughness: 0.4 });
+    const blackMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
 
-    const cubeGroup = new THREE.Group();
-    cubeGroup.add(innerMesh);
-    cubeGroup.add(wireMesh);
-    scene.add(cubeGroup);
+    // Head
+    const headGeom = new THREE.SphereGeometry(0.7, 32, 32);
+    const head = new THREE.Mesh(headGeom, rabbitMat);
+    head.position.y = 0.7;
+    rabbitGroup.add(head);
 
-    // Re-use mesh name for compatibility with animation code
-    const mesh = cubeGroup;
+    // Ears
+    const earGeom = new THREE.CapsuleGeometry(0.15, 0.8, 8, 16);
+    const leftEar = new THREE.Mesh(earGeom, rabbitMat);
+    leftEar.position.set(-0.3, 1.6, -0.1);
+    leftEar.rotation.z = 0.2;
+    leftEar.rotation.x = -0.1;
+    rabbitGroup.add(leftEar);
+
+    const rightEar = new THREE.Mesh(earGeom, rabbitMat);
+    rightEar.position.set(0.3, 1.6, -0.1);
+    rightEar.rotation.z = -0.2;
+    rightEar.rotation.x = -0.1;
+    rabbitGroup.add(rightEar);
+
+    // Inner pink ears
+    const innerEarGeom = new THREE.CapsuleGeometry(0.08, 0.6, 8, 16);
+    const leftInnerEar = new THREE.Mesh(innerEarGeom, pinkMat);
+    leftInnerEar.position.set(-0.3, 1.55, 0.05);
+    leftInnerEar.rotation.copy(leftEar.rotation);
+    rabbitGroup.add(leftInnerEar);
+
+    const rightInnerEar = new THREE.Mesh(innerEarGeom, pinkMat);
+    rightInnerEar.position.set(0.3, 1.55, 0.05);
+    rightInnerEar.rotation.copy(rightEar.rotation);
+    rabbitGroup.add(rightInnerEar);
+
+    // Nose
+    const noseGeom = new THREE.SphereGeometry(0.12, 16, 16);
+    const nose = new THREE.Mesh(noseGeom, pinkMat);
+    nose.position.set(0, 0.7, 0.68);
+    rabbitGroup.add(nose);
+
+    // Eyes
+    const eyeGeom = new THREE.SphereGeometry(0.08, 16, 16);
+    const leftEye = new THREE.Mesh(eyeGeom, blackMat);
+    leftEye.position.set(-0.25, 0.9, 0.55);
+    rabbitGroup.add(leftEye);
+
+    const rightEye = new THREE.Mesh(eyeGeom, blackMat);
+    rightEye.position.set(0.25, 0.9, 0.55);
+    rabbitGroup.add(rightEye);
+
+    // Add rabbit to scene (starts hidden underground)
+    rabbitGroup.position.copy(holePositions[4]);
+    rabbitGroup.position.y = -2;
+    gameGroup.add(rabbitGroup);
 
     // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
-
-    const light1 = new THREE.PointLight(0xffffff, 200, 50); // White light
-    light1.position.set(5, 5, 5);
-    scene.add(light1);
-
-    const light2 = new THREE.PointLight(0xC5A880, 300, 50); // Gold highlight light
-    light2.position.set(-5, -5, -5);
-    scene.add(light2);
-
     const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    dirLight.position.set(0, 5, 10);
+    dirLight.position.set(5, 10, 5);
     scene.add(dirLight);
 
-    // Mouse tracking for mesh parallax rotation
-    let mouseX = 0;
-    let mouseY = 0;
-    let targetX = 0;
-    let targetY = 0;
+    // Game Logic State variables (kept in closure for animation loop)
+    let currentHoleIndex = 4;
+    let timeSinceLastPop = 0;
+    let rabbitState = "hidden"; // hidden, popping_up, up, going_down
+    let isHit = false;
 
-    const handleMouseMove = (e: MouseEvent) => {
+    // Raycaster for click detection
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    const handleClick = (e: MouseEvent) => {
+      if (rabbitState === "hidden" || isHit) return;
+
       const rect = container.getBoundingClientRect();
-      mouseX = ((e.clientX - rect.left) / width) * 2 - 1;
-      mouseY = -((e.clientY - rect.top) / height) * 2 + 1;
+      mouse.x = ((e.clientX - rect.left) / width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+
+      // Check if we hit anything inside the rabbit group
+      const intersects = raycaster.intersectObjects(rabbitGroup.children, true);
+      
+      if (intersects.length > 0) {
+        // HIT!
+        isHit = true;
+        setScore((prev) => prev + 1);
+        
+        // Instantly flatten the rabbit as a "whack" effect
+        rabbitGroup.scale.set(1.5, 0.1, 1.5);
+        rabbitGroup.position.y = 0.1;
+      }
     };
 
-    container.addEventListener("mousemove", handleMouseMove);
+    container.addEventListener("mousedown", handleClick);
 
     // Animation loop
     const clock = new THREE.Clock();
     let animationFrameId: number;
 
     const animate = () => {
-      const elapsedTime = clock.getElapsedTime();
+      const delta = clock.getDelta();
+      
+      // Game State Machine
+      timeSinceLastPop += delta;
 
-      // Smooth mouse follow
-      targetX += (mouseX - targetX) * 0.05;
-      targetY += (mouseY - targetY) * 0.05;
+      if (rabbitState === "hidden") {
+        if (timeSinceLastPop > 1.0) { // stay hidden for 1 second
+          // Pick a random new hole
+          let nextHole;
+          do {
+            nextHole = Math.floor(Math.random() * 9);
+          } while (nextHole === currentHoleIndex);
+          
+          currentHoleIndex = nextHole;
+          rabbitGroup.position.copy(holePositions[currentHoleIndex]);
+          rabbitGroup.position.y = -2; // underground
+          rabbitGroup.scale.set(1, 1, 1); // reset scale
+          
+          isHit = false;
+          rabbitState = "popping_up";
+          timeSinceLastPop = 0;
+        }
+      } else if (rabbitState === "popping_up") {
+        rabbitGroup.position.y += delta * 8; // slide up fast
+        if (rabbitGroup.position.y >= 0) {
+          rabbitGroup.position.y = 0;
+          rabbitState = "up";
+          timeSinceLastPop = 0;
+        }
+      } else if (rabbitState === "up") {
+        if (!isHit && timeSinceLastPop > 1.2) { // stay up for 1.2 seconds if not hit
+          rabbitState = "going_down";
+        } else if (isHit && timeSinceLastPop > 0.5) { // if hit, stay flattened for 0.5 seconds before resetting
+          rabbitState = "hidden";
+          timeSinceLastPop = 0;
+        }
+      } else if (rabbitState === "going_down") {
+        rabbitGroup.position.y -= delta * 6; // slide down
+        if (rabbitGroup.position.y <= -2) {
+          rabbitGroup.position.y = -2;
+          rabbitState = "hidden";
+          timeSinceLastPop = 0;
+        }
+      }
 
-      mesh.rotation.y = elapsedTime * 0.15 + targetX * 0.5;
-      mesh.rotation.x = elapsedTime * 0.1 + -targetY * 0.5;
-
-      // Floating motion
-      mesh.position.y = Math.sin(elapsedTime * 0.8) * 0.25;
+      // Gentle floating animation of the entire board for visual flair
+      const elapsed = clock.getElapsedTime();
+      gameGroup.position.y = Math.sin(elapsed * 1.5) * 0.1;
+      gameGroup.rotation.y = Math.sin(elapsed * 0.5) * 0.05;
 
       renderer.render(scene, camera);
       animationFrameId = requestAnimationFrame(animate);
@@ -167,19 +282,31 @@ export default function AboutSection() {
     resizeObserver.observe(container);
 
     return () => {
-      container.removeEventListener("mousemove", handleMouseMove);
+      container.removeEventListener("mousedown", handleClick);
       cancelAnimationFrame(animationFrameId);
       resizeObserver.disconnect();
-      renderer.dispose();
-      innerGeom.dispose();
-      innerMat.dispose();
-      wireGeom.dispose();
-      wireMat.dispose();
+      
+      if (renderer) {
+        renderer.dispose();
+        renderer.forceContextLoss();
+      }
+      
+      // Cleanup geometries and materials
+      boardGeom.dispose();
+      boardMat.dispose();
+      headGeom.dispose();
+      earGeom.dispose();
+      innerEarGeom.dispose();
+      noseGeom.dispose();
+      eyeGeom.dispose();
+      rabbitMat.dispose();
+      pinkMat.dispose();
+      blackMat.dispose();
     };
   }, []);
 
   return (
-    <section id="about" className="relative w-full py-24 md:py-32 bg-maroon-black/50 border-t border-warm-beige/5 overflow-hidden">
+    <section id="about" className="theme-light relative w-full py-24 md:py-32 bg-maroon-black/50 border-t border-warm-beige/5 overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           
@@ -241,17 +368,18 @@ export default function AboutSection() {
             transition={{ duration: 1.0 }}
             className="w-full h-[350px] md:h-[500px] flex items-center justify-center relative rounded-3xl overflow-hidden glass-card"
           >
-            {/* Interactive container */}
-            <div ref={canvasContainerRef} className="absolute inset-0 w-full h-full flex items-center justify-center">
+            {/* Interactive Game Container */}
+            <div ref={canvasContainerRef} className="absolute inset-0 w-full h-full flex items-center justify-center cursor-crosshair">
               <canvas ref={canvasRef} className="block w-full h-full" />
             </div>
 
-            {/* Small glass stats overlay card */}
-            <div className="absolute bottom-6 left-6 p-4 rounded-xl glass-panel border-warm-beige/10 flex items-center space-x-3 pointer-events-none select-none">
-              <Users className="w-4 h-4 text-luxury-gold animate-bounce" />
-              <div>
-                <div className="text-[8px] font-display font-bold uppercase tracking-widest text-warm-beige/45">Active Global Teams</div>
-                <div className="text-xs font-sans font-medium text-warm-beige">United States, Europe, India</div>
+            {/* Whack-a-Rabbit Scoreboard Overlay */}
+            <div className="absolute top-6 left-6 p-4 rounded-xl glass-panel border-warm-beige/20 flex flex-col items-center justify-center min-w-[120px] pointer-events-none select-none shadow-2xl bg-maroon-black/80">
+              <div className="text-[10px] font-display font-bold uppercase tracking-widest text-luxury-gold mb-1">
+                Whack-A-Rabbit
+              </div>
+              <div className="text-3xl font-display font-extrabold text-warm-beige">
+                Score: {score}
               </div>
             </div>
           </motion.div>

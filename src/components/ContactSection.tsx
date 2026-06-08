@@ -89,6 +89,7 @@ export default function ContactSection() {
               {/* Name Input Group */}
               <div className="relative">
                 <input
+                  suppressHydrationWarning
                   type="text"
                   id="name"
                   value={formData.name}
@@ -114,6 +115,7 @@ export default function ContactSection() {
               {/* Email Input Group */}
               <div className="relative">
                 <input
+                  suppressHydrationWarning
                   type="email"
                   id="email"
                   value={formData.email}
@@ -139,6 +141,7 @@ export default function ContactSection() {
               {/* Message Input Group */}
               <div className="relative">
                 <textarea
+                  suppressHydrationWarning
                   id="message"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -162,6 +165,7 @@ export default function ContactSection() {
 
               {/* Submit Button */}
               <button
+                suppressHydrationWarning
                 type="submit"
                 disabled={isSubmitting}
                 className="w-full flex items-center justify-center space-x-2.5 py-4 rounded-full font-display font-bold uppercase tracking-widest text-xs bg-warm-beige text-maroon-black border border-warm-beige hover:bg-transparent hover:text-warm-beige transition-all duration-300 group interactive-hover"

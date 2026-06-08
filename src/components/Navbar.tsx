@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
   const pathname = usePathname();
 
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -26,7 +27,30 @@ export default function Navbar() {
         else setCurrentLang('EN');
       }
     }
-  }, []);
+
+    const handleScroll = () => {
+      if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+        // Use elementsFromPoint to get all elements under the top center
+        const elements = document.elementsFromPoint(window.innerWidth / 2, 40);
+        
+        // Find the first element that is NOT part of the navbar
+        const targetElement = elements.find(el => !el.closest('header'));
+        
+        if (targetElement) {
+          const section = targetElement.closest('section, main, footer');
+          if (section) {
+            setIsDarkTheme(section.classList.contains('theme-brown'));
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Small delay to allow layout to render first
+    setTimeout(handleScroll, 100);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [pathname]);
 
   const changeLanguage = (langCode: string, display: string) => {
     setLangDropdownOpen(false);
@@ -56,7 +80,7 @@ export default function Navbar() {
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 py-4 px-4 md:px-6 flex items-center justify-between pointer-events-none"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 py-4 px-4 md:px-6 flex items-center justify-between pointer-events-none ${isDarkTheme ? 'theme-brown' : ''}`}
       >
         {/* Logo / Branding */}
         <Link
@@ -65,10 +89,8 @@ export default function Navbar() {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <motion.img
-            src="/logo.png"
-            alt="NEXORESHA Logo"
-            className="w-14 h-14 md:w-16 md:h-16 object-contain"
+          <motion.div
+            className="w-14 h-14 md:w-16 md:h-16"
             animate={isHovered ? {
               scale: 1.1,
               rotate: 12,
@@ -79,9 +101,11 @@ export default function Navbar() {
               filter: "drop-shadow(0 0 4px rgba(168, 85, 247, 0.3))",
             }}
             transition={{ type: "spring", stiffness: 200, damping: 15 }}
-          />
+          >
+            <div className="dynamic-logo" />
+          </motion.div>
           <motion.span
-            className="text-xs md:text-sm font-display font-bold text-gradient-beige uppercase tracking-[0.15em]"
+            className="text-xs md:text-sm font-display font-bold text-dynamic uppercase tracking-[0.15em]"
             animate={isHovered ? {
               y: -1,
               letterSpacing: "0.25em",
@@ -103,6 +127,7 @@ export default function Navbar() {
             {/* Language Selector */}
             <div className="relative">
               <button
+                suppressHydrationWarning
                 onClick={() => setLangDropdownOpen(!langDropdownOpen)}
                 className="px-3 py-1.5 rounded-full border border-warm-beige/10 bg-maroon-black/30 backdrop-blur-md flex items-center space-x-2 text-xs font-display font-bold text-warm-beige hover:border-warm-beige/40 transition-all interactive-hover"
               >
@@ -128,6 +153,7 @@ export default function Navbar() {
 
             {/* Menu Toggle Button (3 Dash / Hamburger Menu) */}
             <button
+              suppressHydrationWarning
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 text-warm-beige hover:text-luxury-gold transition-colors duration-300 interactive-hover"
               aria-label="Toggle menu"

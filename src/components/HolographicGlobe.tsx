@@ -19,7 +19,13 @@ export default function HolographicGlobe() {
     const holoCamera = new THREE.PerspectiveCamera(40, 1, 0.1, 10);
     holoCamera.position.set(0, 0, 4.4);
 
-    const holoRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    let holoRenderer: THREE.WebGLRenderer;
+    try {
+      holoRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    } catch (e) {
+      console.warn("WebGL not supported or context blocked:", e);
+      return;
+    }
     holoRenderer.setSize(600, 600);
     holoRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     $container.appendChild(holoRenderer.domElement);
@@ -214,7 +220,10 @@ export default function HolographicGlobe() {
     return () => {
       cancelAnimationFrame(holoAnimationId);
       document.removeEventListener('mousemove', onHoloMouseMove);
-      if (holoRenderer) holoRenderer.dispose();
+      if (holoRenderer) {
+          holoRenderer.dispose();
+          holoRenderer.forceContextLoss();
+      }
       $container.innerHTML = '';
     };
   }, []);

@@ -6,6 +6,7 @@ import ServicesSection from "@/components/ServicesSection";
 import TeamSection from "@/components/TeamSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import TechStackMarquee from "@/components/TechStackMarquee";
+import BrandsSection from "@/components/BrandsSection";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -28,6 +29,9 @@ export default function Home() {
 
       {/* Testimonials Carousel */}
       <TestimonialsSection />
+
+      {/* Brands Ecosystem Section (Replaces Contact) */}
+      <BrandsSection />
 
       {/* Footer */}
       <Footer />

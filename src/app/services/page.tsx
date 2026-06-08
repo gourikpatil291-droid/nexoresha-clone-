@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import ServicesSection from "@/components/ServicesSection";
+import CtaSection from "@/components/CtaSection";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import HolographicGlobe from "@/components/HolographicGlobe";
@@ -34,7 +35,7 @@ export default function ServicesPage() {
       <Navbar />
       
       {/* Top banner for stand-alone page */}
-      <div className="relative pt-32 pb-8 text-center bg-gradient-to-b from-[#140708] to-maroon-black overflow-hidden flex flex-col items-center">
+      <div className="relative pt-32 pb-8 text-center overflow-hidden flex flex-col items-center">
         <div className="max-w-4xl mx-auto px-6 relative z-10">
           {/* Breadcrumbs */}
           <nav className="flex justify-center items-center space-x-2 text-[10px] md:text-xs font-display uppercase tracking-widest text-warm-beige/40 mb-4 select-none">
@@ -56,6 +57,7 @@ export default function ServicesPage() {
 
       <main className="flex-grow">
         <ServicesSection />
+        <CtaSection />
       </main>
 
       <Footer />

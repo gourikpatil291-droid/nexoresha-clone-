@@ -159,7 +159,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section ref={containerRef} className="relative w-full h-[300vh] bg-maroon-black">
+    <section ref={containerRef} className="theme-brown relative w-full h-[300vh] bg-maroon-black">
       {/* Sticky wrapper for Canvas and Overlay UI */}
       <div className="sticky top-0 w-full h-screen overflow-hidden bg-maroon-black">
         
